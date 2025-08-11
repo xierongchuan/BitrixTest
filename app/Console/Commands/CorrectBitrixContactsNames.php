@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\Bitrix\BitrixWebhookService;
+use Illuminate\Support\Facades\Log;
 
 class CorrectBitrixContactsNames extends Command
 {
@@ -28,14 +29,16 @@ class CorrectBitrixContactsNames extends Command
      */
     public function handle(BitrixWebhookService $bitrix)
     {
-        $response = $bitrix->call(
-            'crm.contact.list',
-            ['filter' => [], 'select' => ['ID','NAME', 'SECOND_NAME', 'LAST_NAME']]
+        // Получаем список всех контактов
+        $contacts = $bitrix->getContacts(
+            ['ID','NAME','SECOND_NAME','LAST_NAME'],
+            ['SECOND_NAME' => '']
         );
 
-        $contacts = $response->result;
+        // Клачтер для команды batch(отправка изменений чанками до 50шт разом)
+        $cluster = [];
 
-        // При отсутствии Second Name берём его из Name Отправка скорректированных контавтов к Bitrix 24
+        // При отсутствии Second Name берём его из Name
         foreach ($contacts as $key => $contact) {
             if (empty($contact['SECOND_NAME'])) {
                 $fullName = explode(" ", $contact['NAME']);
@@ -43,20 +46,24 @@ class CorrectBitrixContactsNames extends Command
                 $contact['SECOND_NAME'] = $fullName[1];
             }
 
-            $response = $bitrix->updateContact(
-                (int) $contact['ID'],
-                [
+            $correctedContact = [
+                'id' => (int)$contact['ID'],
+                'fields' => [
                     'NAME' => $contact['NAME'],
-                    'SECOND_NAME' => $contact['SECOND_NAME'],
-                    'LAST_NAME' => $contact['LAST_NAME'],
-                ]
-            );
+                    'SECOND_NAME' => $contact['SECOND_NAME'] ?? '',
+                    'LAST_NAME' => $contact['LAST_NAME'] ?? '',
+                ],
+            ];
 
-            $this->info("[$key] Скорректирован контакт ID: {$contact['ID']}");
+            $clusterKey = 'cluster_' . $contact['ID'];
+            $cluster[$clusterKey] = 'crm.contact.update?' . http_build_query($correctedContact);
+        }
 
-            if (!$bitrix->isResponseSuccessful($response)) {
-                return Command::FAILURE;
-            }
+        // Разбивка кластера на чанки по 50шт
+        $chunks = array_chunk($cluster, 50, true);
+
+        foreach ($chunks as $chunk) {
+            $bitrix->call('batch', ['cmd' => $chunk]);
         }
 
         return Command::SUCCESS;

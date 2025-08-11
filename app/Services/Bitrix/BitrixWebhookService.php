@@ -25,6 +25,44 @@ class BitrixWebhookService
         return (object)json_decode((string)$res->getBody(), true);
     }
 
+    // Получаем список всех контактов по 50шт
+    public function getContacts(array $select = ['ID','NAME','SECOND_NAME','LAST_NAME'], array $filter = []): array
+    {
+        $start = 0;
+        $all = [];
+
+        while (true) {
+            Log::info("Contact list start={$start}");
+
+            $res = $this->call('crm.contact.list', [
+                'filter' => $filter,
+                'select' => $select,
+                'start'  => (int) $start,
+            ]);
+
+            $total = (int) $res->total;
+
+            // надежно извлечём массив элементов из разных форм ответа
+            $items = [];
+            if (is_object($res) && isset($res->result) && is_array($res->result)) {
+                $items = $res->result;
+            } elseif (is_array($res) && isset($res['result']) && is_array($res['result'])) {
+                $items = $res['result'];
+            }
+
+            $count = count($items);
+            if ($count === 0 || $start >= $total) {
+                break;
+            }
+
+            $all = array_merge($all, $items);
+            $start += $count;
+        }
+
+        Log::info('Total contacts: ' . count($all));
+        return $all;
+    }
+
     public function addContact(string $name, string $secondName, string $lastName): object
     {
         $response = $this->call('crm.contact.add', [
