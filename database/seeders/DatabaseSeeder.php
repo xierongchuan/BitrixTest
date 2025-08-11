@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         $contacts = collect(range(1, 50))->map(function ($i) use ($faker, $client) {
             $firstName  = $faker->firstName;
             $lastName   = $faker->lastName;
-            $secondName = $faker->secondName;
+            $secondName = $faker->middleName;
 
             $contact = (random_int(0, 1) === 0)
                 ? ['NAME' => $firstName, 'SECOND_NAME' => $secondName, 'LAST_NAME' => $lastName]
