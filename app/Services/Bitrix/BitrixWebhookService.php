@@ -36,4 +36,12 @@ class BitrixWebhookService
 
         return $response;
     }
+
+    public function updateContact(int $id, array $fields): object
+    {
+        return $this->call('crm.contact.update', [
+            'id'     => $id,
+            'fields' => $fields,
+        ]);
+    }
 }
