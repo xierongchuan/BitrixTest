@@ -21,6 +21,19 @@ class BitrixWebhookService
     {
         $url = $this->base . $method . '.json';
         $res = $this->http->post($url, ['json' => $params]);
-        return json_decode((string)$res->getBody(), true);
+        return (object)json_decode((string)$res->getBody(), true);
+    }
+
+    public function addContact(string $name, string $secondName, string $lastName): object
+    {
+        $response = $this->call('crm.contact.add', [
+            'fields' => [
+                'NAME' => $name,
+                'SECOND_NAME' => $secondName,
+                'LAST_NAME' => $lastName,
+            ]
+        ]);
+
+        return $response;
     }
 }
