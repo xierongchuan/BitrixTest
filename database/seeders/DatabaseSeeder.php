@@ -20,13 +20,13 @@ class DatabaseSeeder extends Seeder
         $client = new BitrixWebhookService();
 
         $contacts = collect(range(1, 50))->map(function ($i) use ($faker, $client) {
-            $firstName = $faker->firstName;
-            $lastName  = $faker->lastName;
-            $middle    = $faker->middleName;
+            $firstName  = $faker->firstName;
+            $lastName   = $faker->lastName;
+            $secondName = $faker->secondName;
 
             $contact = (random_int(0, 1) === 0)
-                ? ['NAME' => $firstName, 'SECOND_NAME' => $middle, 'LAST_NAME' => $lastName]
-                : ['NAME' => "$firstName $middle", 'SECOND_NAME' => '', 'LAST_NAME' => $lastName];
+                ? ['NAME' => $firstName, 'SECOND_NAME' => $secondName, 'LAST_NAME' => $lastName]
+                : ['NAME' => "$firstName $secondName", 'SECOND_NAME' => '', 'LAST_NAME' => $lastName];
 
             echo $i . '. Adding ' . $contact['NAME'] . "\n";
 
