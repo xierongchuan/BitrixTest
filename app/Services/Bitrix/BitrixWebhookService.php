@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Bitrix;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class BitrixWebhookService
 {
@@ -43,5 +44,24 @@ class BitrixWebhookService
             'id'     => $id,
             'fields' => $fields,
         ]);
+    }
+
+    public function isResponseSuccessful(object $response): bool
+    {
+        if (empty($response)) {
+            Log::error('Bitrix: empty response.');
+            return false;
+        }
+
+        if (isset($response->error)) {
+            Log::error("Bitrix Error: {$response->error} - {$response->error_description}");
+            return false;
+        } elseif (!empty($response->result)) {
+            Log::info("Bitrix: request was successful");
+            return true;
+        } else {
+            Log::error("Bitrix: Unexpected response: " . json_encode($response));
+            return false;
+        }
     }
 }
