@@ -27,12 +27,11 @@ class SeedBitrixContacts extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(BitrixWebhookService $bitrix)
     {
         $faker = Faker::create('ru_RU');
-        $client = new BitrixWebhookService();
 
-        $contacts = collect(range(1, 50))->map(function ($i) use ($faker, $client) {
+        $contacts = collect(range(1, 50))->map(function ($i) use ($faker, $bitrix) {
             $firstName  = $faker->firstName;
             $lastName   = $faker->lastName;
             $secondName = $faker->middleName;
@@ -41,9 +40,9 @@ class SeedBitrixContacts extends Command
                 ? ['NAME' => $firstName, 'SECOND_NAME' => $secondName, 'LAST_NAME' => $lastName]
                 : ['NAME' => "$firstName $secondName", 'SECOND_NAME' => '', 'LAST_NAME' => $lastName];
 
-            echo $i . '. Adding ' . $contact['NAME'] . "\n";
+            $response = $bitrix->addContact($contact['NAME'], $contact['SECOND_NAME'], $contact['LAST_NAME']);
 
-            $response = $client->addContact($contact['NAME'], $contact['SECOND_NAME'], $contact['LAST_NAME']);
+            $this->info("[$i] Добавлен контакт ID: {$response->result}");
 
             return $response;
         });
