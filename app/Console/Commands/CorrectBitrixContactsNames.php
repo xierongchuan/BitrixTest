@@ -29,7 +29,7 @@ class CorrectBitrixContactsNames extends Command
      */
     public function handle(BitrixWebhookService $bitrix)
     {
-        // Получаем список всех контактов
+        // Получаем список всех контактов с отсутствующим SECOND_NAME
         $contacts = $bitrix->getContacts(
             ['ID','NAME','SECOND_NAME','LAST_NAME'],
             ['SECOND_NAME' => '']
