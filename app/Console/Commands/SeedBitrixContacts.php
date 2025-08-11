@@ -30,8 +30,9 @@ class SeedBitrixContacts extends Command
     public function handle(BitrixWebhookService $bitrix)
     {
         $faker = Faker::create('ru_RU');
+        $count = (int) $this->argument('count');
 
-        $contacts = collect(range(1, 50))->map(function ($i) use ($faker, $bitrix) {
+        $contacts = collect(range(1, $count))->map(function ($i) use ($faker, $bitrix) {
             $firstName  = $faker->firstName;
             $lastName   = $faker->lastName;
             $secondName = $faker->middleName;
