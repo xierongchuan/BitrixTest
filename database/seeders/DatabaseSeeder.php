@@ -12,7 +12,7 @@ use Faker\Factory as Faker;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed the application's resources.
      */
     public function run(): void
     {
