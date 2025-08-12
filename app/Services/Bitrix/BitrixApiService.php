@@ -133,4 +133,26 @@ class BitrixApiService
             return false;
         }
     }
+
+    public function findContactsByPhone(string $phone): array
+    {
+        $res = $this->call('crm.duplicate.findbycomm', [
+            'entity_type' => 'CONTACT',
+            'type' => 'PHONE',
+            'values' => [$phone],
+        ]);
+
+        $data = (object)$res->result;
+
+        $contactIds = [];
+        if (isset($data->CONTACT)) {
+            foreach ($data->CONTACT as $id) {
+                $contactIds[] = (int)$id;
+            }
+        }
+
+        Log::info(json_encode($contactIds));
+
+        return $contactIds;
+    }
 }
