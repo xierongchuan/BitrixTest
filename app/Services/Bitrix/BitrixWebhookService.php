@@ -77,13 +77,13 @@ class BitrixWebhookService
         $acc = [];
 
         foreach ($filters as $filter) {
-            $items = $this->getContacts($select, $filter);
-            foreach ($items as $c) {
-                $id = (int) ($c['ID'] ?? 0);
+            $contacts = $this->getContacts($select, $filter);
+            foreach ($contacts as $contact) {
+                $id = (int) ($contact['ID'] ?? 0);
                 if ($id === 0) {
                     continue;
                 }
-                $acc[$id] = $c;
+                $acc[$id] = $contact;
             }
         }
 
