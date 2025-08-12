@@ -36,6 +36,7 @@ class SeedBitrixContacts extends Command
             $firstName  = $faker->firstName;
             $lastName   = $faker->lastName;
             $secondName = $faker->middleName;
+            $phoneNumber = '+7' . (string) random_int(1000000000, 9000000000);
 
             $rnd = random_int(0, 2);
 
@@ -49,7 +50,12 @@ class SeedBitrixContacts extends Command
                 $contact = ['NAME' => "$firstName $lastName", 'SECOND_NAME' => "$secondName", 'LAST_NAME' => ''];
             }
 
-            $response = $bitrix->addContact($contact['NAME'], $contact['SECOND_NAME'], $contact['LAST_NAME']);
+            $response = $bitrix->addContact(
+                $contact['NAME'],
+                $contact['SECOND_NAME'],
+                $contact['LAST_NAME'],
+                $phoneNumber
+            );
 
             $this->info("[$i] Добавлен контакт ID: {$response->result}");
 
