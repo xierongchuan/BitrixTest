@@ -38,7 +38,10 @@ class CorrectBitrixContactsNames extends Command
         // При отсутствии Second Name берём его из Name
         foreach ($contacts as $key => $contact) {
             $fullName = explode(" ", trim($contact['NAME']));
-            $fullNameCount = count($fullName);
+
+            if (count($fullName) <= 1) {
+                continue;
+            }
 
             if (
                 empty($contact['SECOND_NAME']) &&
