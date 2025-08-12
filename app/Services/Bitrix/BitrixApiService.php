@@ -7,7 +7,7 @@ namespace App\Services\Bitrix;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
-class BitrixWebhookService
+class BitrixApiService
 {
     protected string $base;
     protected Client $http;

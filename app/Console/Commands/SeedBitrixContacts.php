@@ -49,7 +49,7 @@ class SeedBitrixContacts extends Command
                 $contact = ['NAME' => "$firstName $lastName", 'SECOND_NAME' => "$secondName", 'LAST_NAME' => ''];
             }
             if ($rnd === 3) {
-                $contact = ['NAME' => "$firstName $lastName $secondName", 'SECOND_NAME' => '', 'LAST_NAME' => ''];
+                $contact = ['NAME' => "$firstName $secondName $lastName", 'SECOND_NAME' => '', 'LAST_NAME' => ''];
             }
 
             $response = $bitrix->addContact($contact['NAME'], $contact['SECOND_NAME'], $contact['LAST_NAME']);
