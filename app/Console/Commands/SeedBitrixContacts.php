@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\Bitrix\BitrixWebhookService;
+use App\Services\Bitrix\BitrixApiService;
 use Faker\Factory as Faker;
 
 class SeedBitrixContacts extends Command
@@ -27,7 +27,7 @@ class SeedBitrixContacts extends Command
     /**
      * Execute the console command.
      */
-    public function handle(BitrixWebhookService $bitrix)
+    public function handle(BitrixApiService $bitrix)
     {
         $faker = Faker::create('ru_RU');
         $count = (int) $this->argument('count');
