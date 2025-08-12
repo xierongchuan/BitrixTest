@@ -69,7 +69,6 @@ class BitrixApiService
         $select = ['ID','NAME','SECOND_NAME','LAST_NAME'];
 
         $filters = [
-            ['SECOND_NAME' => '', 'LAST_NAME' => ''],
             ['SECOND_NAME' => '', '!=LAST_NAME' => ''],
             ['LAST_NAME' => '', '!=SECOND_NAME' => ''],
         ];
