@@ -63,6 +63,7 @@ class BitrixWebhookService
         return $all;
     }
 
+    // Получаем список всех контактов с проблемной ФИО
     public function getAllUncorrectedContacts(): array
     {
         $select = ['ID','NAME','SECOND_NAME','LAST_NAME'];
