@@ -68,7 +68,7 @@ class BitrixApiService
     // Поэтому получаем весь список по двум запросам отдельно.
     public function getAllUncorrectedContacts(): array
     {
-        $select = ['ID','NAME','SECOND_NAME','LAST_NAME'];
+        $select = ['ID','NAME','SECOND_NAME','LAST_NAME', 'PHONE'];
 
         $filters = [
             ['SECOND_NAME' => '', '!=LAST_NAME' => ''],
