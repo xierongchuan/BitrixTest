@@ -63,7 +63,9 @@ class BitrixApiService
         return $all;
     }
 
-    // Получаем список всех контактов с проблемной ФИО
+    // Получаем список всех контактов с проблемной ФИО.
+    // Костыль по причине того что не работает оператор api LOGIC OR(или как минимум я не смог разобраться)
+    // Поэтому получаем весь список по двум запросам отдельно.
     public function getAllUncorrectedContacts(): array
     {
         $select = ['ID','NAME','SECOND_NAME','LAST_NAME'];
