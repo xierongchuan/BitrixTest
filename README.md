@@ -1,6 +1,11 @@
 # BitrixTest
 Testing Bitrix24 API
 
+### Info
+* To Start `php artisan serve`
+* BP Endpoint: /api/bp/phone_contacts
+* WebHookBody: {"phone": "+XXXXXXXXXXX"}
+
 
 ### 1. Set up environment
 ```.env
