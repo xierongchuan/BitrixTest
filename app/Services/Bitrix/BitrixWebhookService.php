@@ -25,7 +25,7 @@ class BitrixWebhookService
         return (object)json_decode((string)$res->getBody(), true);
     }
 
-    // Получаем список всех контактов по 50шт
+    // Получаем список всех контактов по 50шт(с обходом пагинации)
     public function getContacts(array $select = ['ID','NAME','SECOND_NAME','LAST_NAME'], array $filter = []): array
     {
         $start = 0;
@@ -42,7 +42,7 @@ class BitrixWebhookService
 
             $total = (int) $res->total;
 
-            // надежно извлечём массив элементов из разных форм ответа
+            // Надежно извлечём массив элементов из разных форм ответа
             $items = [];
             if (is_object($res) && isset($res->result) && is_array($res->result)) {
                 $items = $res->result;
@@ -61,6 +61,32 @@ class BitrixWebhookService
 
         Log::info('Total contacts: ' . count($all));
         return $all;
+    }
+
+    public function getAllUncorrectedContacts(): array
+    {
+        $select = ['ID','NAME','SECOND_NAME','LAST_NAME'];
+
+        $filters = [
+            ['SECOND_NAME' => '', 'LAST_NAME' => ''],
+            ['SECOND_NAME' => '', '!=LAST_NAME' => ''],
+            ['LAST_NAME' => '', '!=SECOND_NAME' => ''],
+        ];
+
+        $acc = [];
+
+        foreach ($filters as $filter) {
+            $items = $this->getContacts($select, $filter);
+            foreach ($items as $c) {
+                $id = (int) ($c['ID'] ?? 0);
+                if ($id === 0) {
+                    continue;
+                }
+                $acc[$id] = $c;
+            }
+        }
+
+        return array_values($acc);
     }
 
     public function addContact(string $name, string $secondName, string $lastName): object
