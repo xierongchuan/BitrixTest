@@ -37,7 +37,7 @@ class SeedBitrixContacts extends Command
             $lastName   = $faker->lastName;
             $secondName = $faker->middleName;
 
-            $rnd = random_int(0, 3);
+            $rnd = random_int(0, 2);
 
             if ($rnd === 0) {
                 $contact = ['NAME' => $firstName, 'SECOND_NAME' => $secondName, 'LAST_NAME' => $lastName];
@@ -47,9 +47,6 @@ class SeedBitrixContacts extends Command
             }
             if ($rnd === 2) {
                 $contact = ['NAME' => "$firstName $lastName", 'SECOND_NAME' => "$secondName", 'LAST_NAME' => ''];
-            }
-            if ($rnd === 3) {
-                $contact = ['NAME' => "$firstName $secondName $lastName", 'SECOND_NAME' => '', 'LAST_NAME' => ''];
             }
 
             $response = $bitrix->addContact($contact['NAME'], $contact['SECOND_NAME'], $contact['LAST_NAME']);
