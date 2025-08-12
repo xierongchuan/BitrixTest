@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\Bitrix\BitrixWebhookService;
+use App\Services\Bitrix\BitrixApiService;
 use Illuminate\Support\Facades\Log;
 
 class CorrectBitrixContactsNames extends Command
@@ -27,23 +27,33 @@ class CorrectBitrixContactsNames extends Command
     /**
      * Execute the console command.
      */
-    public function handle(BitrixWebhookService $bitrix)
+    public function handle(BitrixApiService $bitrix)
     {
-        // Получаем список всех контактов с отсутствующим SECOND_NAME
-        $contacts = $bitrix->getContacts(
-            ['ID','NAME','SECOND_NAME','LAST_NAME'],
-            ['SECOND_NAME' => '']
-        );
+        // Получаем список всех контактов с проблемной ФИО
+        $contacts = $bitrix->getAllUncorrectedContacts();
 
-        // Клачтер для команды batch(отправка изменений чанками до 50шт разом)
+        // Кластер для команды batch(отправка изменений чанками до 50шт разом)
         $cluster = [];
 
         // При отсутствии Second Name берём его из Name
         foreach ($contacts as $key => $contact) {
-            if (empty($contact['SECOND_NAME'])) {
-                $fullName = explode(" ", $contact['NAME']);
+            $fullName = explode(" ", trim($contact['NAME']));
+            $fullNameCount = count($fullName);
+
+            if (
+                empty($contact['SECOND_NAME']) &&
+                isset($contact['LAST_NAME'])
+            ) {
                 $contact['NAME'] = $fullName[0];
                 $contact['SECOND_NAME'] = $fullName[1];
+            }
+
+            if (
+                isset($contact['SECOND_NAME']) &&
+                empty($contact['LAST_NAME'])
+            ) {
+                $contact['NAME'] = $fullName[0];
+                $contact['LAST_NAME'] = $fullName[1];
             }
 
             $correctedContact = [
