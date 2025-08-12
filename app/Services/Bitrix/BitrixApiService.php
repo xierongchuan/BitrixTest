@@ -91,13 +91,16 @@ class BitrixApiService
         return array_values($acc);
     }
 
-    public function addContact(string $name, string $secondName, string $lastName): object
+    public function addContact(string $name, string $secondName, string $lastName, string $phone): object
     {
         $response = $this->call('crm.contact.add', [
             'fields' => [
                 'NAME' => $name,
                 'SECOND_NAME' => $secondName,
                 'LAST_NAME' => $lastName,
+                'PHONE' => [
+                    ['VALUE' => $phone, 'VALUE_TYPE' => 'WORK']
+                ],
             ]
         ]);
 
